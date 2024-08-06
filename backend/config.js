@@ -12,5 +12,9 @@ module.exports = {
     ssl: {
       ca: fs.readFileSync(path.join(__dirname, 'SSL', 'DigiCertGlobalRootCA.crt.pem')) // Adjust the path accordingly
     }
+  },
+  azure: {
+    storageConnectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+    containerName: process.env.AZURE_CONTAINER_NAME
   }
 };
