@@ -22,4 +22,20 @@ router.delete('/:id', async (req, res) => {
     }
 })
 
+//create user
+router.post('/', async (req, res) => {
+    try {
+        const users = await userService.createUser(req.body);
+        
+        res.status(201).json({
+            message: `User ${req.body.username} created`,
+            email: users.email,
+            type: users.type
+        });
+        // res.json(users);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+})
+
 module.exports = router;

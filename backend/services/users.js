@@ -21,7 +21,16 @@ async function deleteUser(id){
     return rows;
 }
 
+async function createUser(user){
+    const connection = await getConnection();
+    const [rows] = await connection.query('INSERT INTO users (username, password, email, type) VALUES (?, ?, ?, ?)',
+         [user.username, user.password, user.email, user.type]);
+    await connection.end();
+    return rows;
+}
+
 module.exports = {
     getAllUsers,
-    deleteUser
+    deleteUser,
+    createUser
 };
