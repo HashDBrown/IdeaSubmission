@@ -1,30 +1,17 @@
-require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path'); // Path module
+const config = require('./config'); // Adjust the path if necessary
+const userRoutes = require('./routes/users');
 
 const app = express();
-const port = 3000; // Change this to an available port if 3306 is occupied
+const port = config.port;
 
 app.use(cors());
 app.use(express.json());
+app.use('/users', userRoutes);
 
-// console.log(process.env.DB_HOST);
-// console.log(process.env.DB_USER);
-// console.log(process.env.DB_PASSWORD);
-// console.log(process.env.DB_NAME);
-
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  ssl: {
-    ca: fs.readFileSync(path.join(__dirname, 'SSL', 'DigiCertGlobalRootCA.crt.pem')) // Adjust the path accordingly
-  }
-});
+const db = mysql.createConnection(config.dbConfig);
 
 db.connect(err => {
   if (err) {
@@ -36,4 +23,6 @@ db.connect(err => {
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  //print url
+  console.log(`http://localhost:${port}`);
 });
