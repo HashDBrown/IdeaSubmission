@@ -13,6 +13,15 @@ async function getAllUsers() {
     return rows;
 }
 
+//delete user by id
+async function deleteUser(id){
+    const connection = await getConnection();
+    const [rows] = await connection.query('DELETE FROM users WHERE id = ?', [id]);
+    await connection.end();
+    return rows;
+}
+
 module.exports = {
-    getAllUsers
+    getAllUsers,
+    deleteUser
 };

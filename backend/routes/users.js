@@ -11,4 +11,15 @@ router.get('/', async (req, res) => {
     }
 });
 
+//delete user by id
+router.delete('/:id', async (req, res) => {
+    try {
+        const users = await userService.deleteUser(req.params.id);
+        console.log('User deleted');
+        res.json(users);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+})
+
 module.exports = router;
