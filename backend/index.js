@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const cors = require('cors');
 const config = require('./config'); // Adjust the path if necessary
 const userRoutes = require('./routes/users');
+const submissionRoutes = require('./routes/submissions');
 
 const app = express();
 const port = config.port;
@@ -10,6 +11,7 @@ const port = config.port;
 app.use(cors());
 app.use(express.json());
 app.use('/users', userRoutes);
+app.use('/submissions', submissionRoutes);
 
 const db = mysql.createConnection(config.dbConfig);
 
