@@ -13,9 +13,22 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+  // Accept only .jpeg and .png files
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only .jpeg and .png files are allowed'), false);
+  }
+};
+
+const upload = multer({ 
+  storage: storage, 
+  fileFilter: fileFilter 
+});
 
 // Create submission with file upload
+// only accept .jpeg and .png files\
 router.post('/submit', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -37,6 +50,16 @@ router.post('/submit', upload.single('file'), async (req, res) => {
       text: submission.text,
       file_path: submission.file_path
     });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get all submissions
+router.get('', async (req, res) => {
+  try {
+    const submissions = await submissionService.getAllSubmissions();
+    res.json(submissions);
   } catch (err) {
     res.status(500).send(err.message);
   }

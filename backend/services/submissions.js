@@ -36,6 +36,14 @@ async function createSubmission(submission) {
   return rows[0]; // Return the first row (newly created submission)
 }
 
+async function getAllSubmissions(){
+  const connection = await getConnection();
+  const [rows] = await connection.query('SELECT * FROM submission');
+  await connection.end();
+  return rows;
+}
+
 module.exports = {
-  createSubmission
+  createSubmission,
+  getAllSubmissions
 };
