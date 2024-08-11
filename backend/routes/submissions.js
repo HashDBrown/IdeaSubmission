@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import * as submissionService from '../services/submissions.js';
+import verifyJWT from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -57,6 +58,9 @@ router.post('/submit', upload.single('file'), async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+if (process.env.JWT_ENABLED === "true")
+  router.use(verifyJWT);
 
 // Get all submissions
 router.get('', async (req, res) => {
