@@ -1,5 +1,6 @@
 import express from 'express';
 import * as userService from '../services/users.js';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -43,10 +44,14 @@ router.post('/login', async (req, res) => {
     try {
         const result = await userService.login(req.body);
         if (result.success) {
+            // Create a token
+            const token = jwt.sign({ email: result.user.email, type: result.user.type }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+
             res.status(200).json({
                 message: `User ${result.user.username} logged in`,
                 email: result.user.email,
-                type: result.user.type
+                type: result.user.type,
+                token: token
             });
         } else {
             res.status(401).json({ message: result.message });
