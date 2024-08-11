@@ -1,8 +1,10 @@
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
+import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
-module.exports = {
+dotenv.config();
+
+export default {
   port: 3000,
   dbConfig: {
     host: process.env.DB_HOST,
@@ -10,7 +12,8 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     ssl: {
-      ca: fs.readFileSync(path.join(__dirname, 'SSL', 'DigiCertGlobalRootCA.crt.pem')) // Adjust the path accordingly
+      // Adjusted to ensure the correct path
+      ca: fs.readFileSync(path.join(path.resolve(), 'SSL', 'DigiCertGlobalRootCA.crt.pem'))
     }
   },
   azure: {

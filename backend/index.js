@@ -1,9 +1,9 @@
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-const config = require('./config'); // Adjust the path if necessary
-const userRoutes = require('./routes/users');
-const submissionRoutes = require('./routes/submissions');
+import express from 'express';
+import mysql from 'mysql2/promise';
+import cors from 'cors';
+import config from './config.js';
+import userRoutes from './routes/users.js';
+import submissionRoutes from './routes/submissions.js';
 
 const app = express();
 const port = config.port;
@@ -13,18 +13,20 @@ app.use(express.json());
 app.use('/users', userRoutes);
 app.use('/submissions', submissionRoutes);
 
-const db = mysql.createConnection(config.dbConfig);
-
-db.connect(err => {
-  if (err) {
+async function connectToDatabase() {
+  try {
+    const connection = await mysql.createConnection(config.dbConfig);
+    console.log('Connected to MySQL');
+    return connection;
+  } catch (err) {
     console.error('Error connecting to MySQL:', err);
-    return;
+    process.exit(1); // Exit the process if the connection fails
   }
-  console.log('Connected to MySQL');
-});
+}
+
+connectToDatabase();
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
-  //print url
   console.log(`http://localhost:${port}`);
 });

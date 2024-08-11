@@ -1,9 +1,10 @@
-const mysql = require('mysql2/promise');
-const config = require('../config');
-const { BlobServiceClient } = require('@azure/storage-blob');
-const { v4: uuidv4 } = require('uuid');
-const path = require('path');
-const fs = require('fs').promises;
+import mysql from 'mysql2/promise';
+import config from '../config.js';
+import { BlobServiceClient } from '@azure/storage-blob';
+import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
+import fs from 'fs/promises';
+import { sendEmail } from './emailService.js';
 
 async function getConnection() {
   const connection = await mysql.createConnection(config.dbConfig);
@@ -17,11 +18,10 @@ async function uploadFileToAzure(file) {
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
   await blockBlobClient.uploadFile(file.path);
-  await fs.unlink(file.path); // Delete the local file after upload
   return blockBlobClient.url;
 }
 
-async function createSubmission(submission) {
+export async function createSubmission(submission) {
   const fileUrl = await uploadFileToAzure(submission.file);
 
   const connection = await getConnection();
@@ -30,20 +30,21 @@ async function createSubmission(submission) {
     [submission.email, submission.text, fileUrl]
   );
 
-  // Retrieve the newly inserted submission
   const [rows] = await connection.query('SELECT * FROM submission WHERE id = ?', [result.insertId]);
+
+  // Uncomment and modify this if you want to send an email with the attachment
+  await sendEmail(submission.text, submission.email, submission.file.path);
+
+  // Delete the local file after sending the email
+  await fs.unlink(submission.file.path);
+
   await connection.end();
-  return rows[0]; // Return the first row (newly created submission)
+  return rows[0];
 }
 
-async function getAllSubmissions(){
+export async function getAllSubmissions() {
   const connection = await getConnection();
   const [rows] = await connection.query('SELECT * FROM submission');
   await connection.end();
   return rows;
 }
-
-module.exports = {
-  createSubmission,
-  getAllSubmissions
-};

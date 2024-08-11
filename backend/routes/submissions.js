@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import multer from 'multer';
+import * as submissionService from '../services/submissions.js';
+
 const router = express.Router();
-const multer = require('multer');
-const submissionService = require('../services/submissions');
 
 // Set up multer for file uploads
 const storage = multer.diskStorage({
@@ -28,7 +29,6 @@ const upload = multer({
 });
 
 // Create submission with file upload
-// only accept .jpeg and .png files\
 router.post('/submit', upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -50,6 +50,9 @@ router.post('/submit', upload.single('file'), async (req, res) => {
       text: submission.text,
       file_path: submission.file_path
     });
+
+    // Uncomment and modify this if you want to send an email with the attachment
+    // await sendEmail(submission.text, submission.email, req.file.path);
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -65,4 +68,4 @@ router.get('', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

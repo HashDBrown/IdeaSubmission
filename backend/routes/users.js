@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express';
+import * as userService from '../services/users.js';
+
 const router = express.Router();
-const userService = require('../services/users');
 
 router.get('/', async (req, res) => {
     try {
@@ -11,7 +12,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-//delete user by id
+// Delete user by id
 router.delete('/:id', async (req, res) => {
     try {
         const users = await userService.deleteUser(req.params.id);
@@ -20,9 +21,9 @@ router.delete('/:id', async (req, res) => {
     } catch (err) {
         res.status(500).send(err.message);
     }
-})
+});
 
-//create user
+// Create user
 router.post('/', async (req, res) => {
     try {
         const users = await userService.createUser(req.body);
@@ -32,13 +33,12 @@ router.post('/', async (req, res) => {
             email: users.email,
             type: users.type
         });
-        // res.json(users);
     } catch (err) {
         res.status(500).send(err.message);
     }
-})
+});
 
-//login
+// Login
 router.post('/login', async (req, res) => {
     try {
         const result = await userService.login(req.body);
@@ -56,6 +56,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
-
-module.exports = router;
+export default router;
