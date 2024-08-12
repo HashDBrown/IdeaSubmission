@@ -72,4 +72,17 @@ router.get('', async (req, res) => {
   }
 });
 
+//delete submission by id
+router.delete('/:id', async (req, res) => {
+  try {
+    // what does req.params.id do?
+    // answer: req.params.id gets the id from the URL
+    const id = req.params.id;
+    await submissionService.deleteSubmission(id);
+    res.json({ message: 'Submission deleted' });
+  }catch(err){
+    res.status(500).send(err.message);
+  }
+});
+
 export default router;

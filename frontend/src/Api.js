@@ -17,3 +17,30 @@ export const Users = {
         }
     },
 };
+
+export const Submissions = {
+    submit: async (submission) => {
+        try {
+            //this endpoint does not need to use jwt
+            const response = await axios.post(`${API_URL}/submissions/submit`, submission);
+            return response.data;
+        } catch (error) {
+            console.error('Error submitting:', error);
+            throw error;
+        }
+    },
+    getAllSubmissions: async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${API_URL}/submissions`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error getting submissions:', error);
+            throw error;
+        }
+    }   
+}
