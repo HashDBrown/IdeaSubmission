@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import { deleteSubmission } from '../../backend/services/submissions';
 //use .env file to store the API URL
 
 const API_URL = process.env.API_URL;
@@ -42,5 +43,19 @@ export const Submissions = {
             console.error('Error getting submissions:', error);
             throw error;
         }
-    }   
+    },
+    deleteSubmission: async (id) => {
+        try{
+            const token = localStorage.getItem('token');
+            const response = await axios.delete(`${API_URL}/submissions/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        }catch(error){
+            console.error('Error deleting submission:', error);
+            throw error;
+        }
+    }
 }
